@@ -1,11 +1,21 @@
-import Head from "next/head";
+import Auth from "@/components/Auth/Auth";
+import Chat from "@/components/Chat/Chat";
+import { Box } from "@chakra-ui/layout";
+import { NextPageContext } from "next";
+import { getSession, useSession } from "next-auth/react";
 import { Inter } from "next/font/google";
-import { signIn, useSession } from "next-auth/react";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-	const { data } = useSession();
+	const { data: session } = useSession();
+
+	const reloadSession = () => {
+		const event = new Event("visibilitychange");
+		document.dispatchEvent(event);
+	};
+	console.log(session);
 	return (
 		<>
 			<Head>
@@ -15,10 +25,23 @@ export default function Home() {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
-			<div>
-				<button onClick={() => signIn("google")}>Sign in</button>
-				<p>asd</p>
-			</div>
+			<Box>
+				{session?.user?.username ? (
+					<Chat />
+				) : (
+					<Auth session={session} reloadSession={reloadSession} />
+				)}
+			</Box>
 		</>
 	);
+}
+
+export async function getServerSideProps(context: NextPageContext) {
+	const session = await getSession(context);
+
+	return {
+		props: {
+			session,
+		},
+	};
 }
