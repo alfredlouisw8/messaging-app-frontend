@@ -1,17 +1,31 @@
 import { Box, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
+import { useRouter } from "next/router";
 import { useState } from "react";
+import { ConversationPopulated } from "../../../../../backend/src/util/types";
+import ConversationItem from "./ConversationItem";
 import ConversationModal from "./ConversationModal/Modal";
 
 interface IConversationListProps {
 	session: Session;
+	conversations: ConversationPopulated[];
+	onViewConversation: (conversationId: string) => void;
 }
 
-const ConversationList: React.FC<IConversationListProps> = ({ session }) => {
+const ConversationList: React.FC<IConversationListProps> = ({
+	session,
+	conversations,
+	onViewConversation,
+}) => {
+	const router = useRouter();
+	const {
+		user: { id: userId },
+	} = session;
 	const [isOpen, setIsOpen] = useState(false);
 	const onOpen = () => setIsOpen(true);
 	const onClose = () => setIsOpen(false);
 
+	console.log(conversations);
 	return (
 		<Box width="100%">
 			<Box
@@ -26,6 +40,15 @@ const ConversationList: React.FC<IConversationListProps> = ({ session }) => {
 					Find or start a conversation
 				</Text>
 			</Box>
+			{conversations.map((conversation) => (
+				<ConversationItem
+					conversation={conversation}
+					key={conversation.id}
+					onClick={() => onViewConversation(conversation.id)}
+					isSelected={conversation.id === router.query.conversationId}
+					userId={userId}
+				/>
+			))}
 			<ConversationModal isOpen={isOpen} onClose={onClose} session={session} />
 		</Box>
 	);

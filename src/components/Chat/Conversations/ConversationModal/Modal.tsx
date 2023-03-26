@@ -24,6 +24,7 @@ import ConversationOperations from "../../../../graphql/operations/conversation"
 import Participants from "./Participants";
 import UserSearchList from "./UserSearchList";
 import { Session } from "next-auth";
+import { useRouter } from "next/router";
 
 interface IModalProps {
 	isOpen: boolean;
@@ -39,6 +40,8 @@ const ConversationModal: React.FC<IModalProps> = ({
 	const {
 		user: { id: userId },
 	} = session;
+
+	const router = useRouter();
 
 	const [username, setUsername] = useState("");
 	const [participants, setParticipants] = useState<SearchedUser[]>([]);
@@ -75,11 +78,30 @@ const ConversationModal: React.FC<IModalProps> = ({
 			...participants.map((participant) => participant.id),
 		];
 		try {
-			const {} = await createConversation({
+			const { data } = await createConversation({
 				variables: {
 					participantIds,
 				},
 			});
+
+			if (!data?.createConversation) {
+				throw new Error("Failed to create conversation");
+			}
+
+			const {
+				createConversation: { conversationId },
+			} = data;
+
+			router.push({ query: { conversationId } });
+
+			/**
+			 * Clear state and close modal
+			 * on successful creation
+			 */
+
+			setParticipants([]);
+			setUsername("");
+			onClose();
 		} catch (error: any) {
 			console.error("onCreateConversation error", error);
 			toast.error(error?.message);
