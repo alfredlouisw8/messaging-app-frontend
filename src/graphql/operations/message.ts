@@ -23,13 +23,13 @@ export default {
 	Mutations: {
 		sendMessage: gql`
 			mutation SendMessage(
-				$id: String!
+				# $id: String!
 				$conversationId: String!
 				$senderId: String!
 				$body: String!
 			) {
 				sendMessage(
-					id: $id
+					# id: $id
 					conversationId: $conversationId
 					senderId: $senderId
 					body: $body
