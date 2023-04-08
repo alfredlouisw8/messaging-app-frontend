@@ -1,5 +1,7 @@
+import { MessagesData, MessagesVariables } from "@/util/types";
 import { useMutation } from "@apollo/client";
 import { Box, Input } from "@chakra-ui/react";
+import { ObjectId } from "bson";
 import { Session } from "next-auth";
 import { FormEvent, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -16,6 +18,7 @@ const MessageInput: React.FC<IMessageInputProps> = ({
 	conversationId,
 }) => {
 	const [messageBody, setMessageBody] = useState("");
+
 	const [sendMessage] = useMutation<
 		{ sendMessage: boolean },
 		SendMessageArguments
@@ -37,9 +40,45 @@ const MessageInput: React.FC<IMessageInputProps> = ({
 				body: messageBody,
 			};
 
+			setMessageBody("");
+
 			const { data, errors } = await sendMessage({
 				variables: {
 					...newMessage,
+				},
+				optimisticResponse: {
+					sendMessage: true,
+				},
+				update: (cache) => {
+					const existing = cache.readQuery<MessagesData>({
+						query: MessageOperations.Queries.messages,
+						variables: { conversationId },
+					});
+
+					const existingMessages = existing ? existing.messages : [];
+
+					cache.writeQuery<MessagesData, MessagesVariables>({
+						query: MessageOperations.Queries.messages,
+						variables: { conversationId },
+						data: {
+							...existing,
+							messages: [
+								{
+									id: new ObjectId().toString(),
+									body: messageBody,
+									senderId: session.user.id,
+									conversationId,
+									sender: {
+										id: session.user.id,
+										username: session.user.username,
+									},
+									createdAt: new Date(),
+									updatedAt: new Date(),
+								},
+								...existingMessages,
+							],
+						},
+					});
 				},
 			});
 

@@ -15,7 +15,6 @@ export default function Home() {
 		const event = new Event("visibilitychange");
 		document.dispatchEvent(event);
 	};
-	console.log(session);
 	return (
 		<>
 			<Head>
