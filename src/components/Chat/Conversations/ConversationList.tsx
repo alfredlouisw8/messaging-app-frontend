@@ -3,12 +3,12 @@ import { Box, Button, Stack, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { ConversationPopulated } from "../../../../../backend/src/util/types";
 import ConversationItem from "./ConversationItem";
 import ConversationModal from "./ConversationModal/Modal";
 import ConversationOperations from "../../../graphql/operations/conversation";
 import { toast } from "react-hot-toast";
 import { signOut } from "next-auth/react";
+import { ConversationPopulated, ParticipantPopulated } from "@/util/types";
 
 interface IConversationListProps {
 	session: Session;
@@ -86,7 +86,7 @@ const ConversationList: React.FC<IConversationListProps> = ({
 			<Stack flexGrow={1} overflow="auto">
 				{sortedConversations.map((conversation) => {
 					const participant = conversation.participants.find(
-						(p) => p.user.id === userId
+						(p: ParticipantPopulated) => p.user.id === userId
 					);
 
 					return (

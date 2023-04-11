@@ -1,11 +1,14 @@
-import { MessagesData, MessagesVariables } from "@/util/types";
+import {
+	MessagesData,
+	MessagesVariables,
+	SendMessageArguments,
+} from "@/util/types";
 import { useMutation } from "@apollo/client";
 import { Box, Input } from "@chakra-ui/react";
 import { ObjectId } from "bson";
 import { Session } from "next-auth";
 import { FormEvent, useState } from "react";
 import { toast } from "react-hot-toast";
-import { SendMessageArguments } from "../../../../../../backend/src/util/types";
 import MessageOperations from "../../../../graphql/operations/message";
 
 interface IMessageInputProps {

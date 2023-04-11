@@ -11,13 +11,11 @@ import {
 } from "@apollo/client";
 import {
 	ConversationDeletedData,
+	ConversationPopulated,
 	ConversationsData,
 	ConversationUpdatedData,
-} from "@/util/types";
-import {
-	ConversationPopulated,
 	ParticipantPopulated,
-} from "../../../../../backend/src/util/types";
+} from "@/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import SkeletonLoader from "@/components/common/SkeletonLoader";
@@ -71,7 +69,7 @@ const ConversationWrapper: React.FC<IConversationWrapperProps> = ({
 					updatedConversation.id === conversationId;
 
 				if (currentlyViewingConversation) {
-					onViewConversation(conversationId, false);
+					onViewConversation(conversationId as string, false);
 				}
 			},
 		}

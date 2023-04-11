@@ -1,12 +1,13 @@
-import {
-	ConversationPopulated,
-	MessagePopulated,
-} from "../../../backend/src/util/types";
-
 /**
  * User
  */
 
+import { Conversation, ConversationParticipant, Message } from "@prisma/client";
+
+export type UserPopulated = {
+	id: string;
+	username: string | null;
+};
 export interface CreateUsernameData {
 	createUsername: {
 		success: boolean;
@@ -34,6 +35,15 @@ export interface SearchedUser {
 /**
  * Conversation
  */
+
+export type ConversationPopulated = Conversation & {
+	participants: ParticipantPopulated[];
+	latestMessage: Message | null;
+};
+
+export type ParticipantPopulated = ConversationParticipant & {
+	user: UserPopulated;
+};
 export interface ConversationsData {
 	conversations: ConversationPopulated[];
 }
@@ -63,9 +73,18 @@ export interface ConversationDeletedData {
 /**
  * Message
  */
-
+export type MessagePopulated = Message & {
+	sender: UserPopulated;
+};
 export interface MessagesData {
 	messages: MessagePopulated[];
+}
+
+export interface SendMessageArguments {
+	// id: string;
+	conversationId: string;
+	senderId: string;
+	body: string;
 }
 
 export interface MessagesVariables {
