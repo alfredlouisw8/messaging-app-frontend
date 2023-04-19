@@ -74,7 +74,10 @@ const Auth: React.FunctionComponent<IAuthProps> = ({
 					<>
 						<Text fontSize="3xl">Messenger</Text>
 						<Button
-							onClick={() => signIn("google")}
+							onClick={(e) => {
+								e.preventDefault();
+								signIn("google");
+							}}
 							leftIcon={
 								<Image
 									height={20}
