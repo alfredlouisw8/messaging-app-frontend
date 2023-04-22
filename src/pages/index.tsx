@@ -40,15 +40,12 @@ export default function Home() {
 	);
 }
 
-// export async function getServerSideProps(context: NextPageContext) {
-// 	// @ts-ignore
-// 	const session = await getServerSession(context.req, context.res, authOptions);
+export async function getServerSideProps(context: NextPageContext) {
+	const session = await getSession(context);
 
-// 	//console.log(session);
-
-// 	return {
-// 		props: {
-// 			session,
-// 		},
-// 	};
-// }
+	return {
+		props: {
+			session,
+		},
+	};
+}
